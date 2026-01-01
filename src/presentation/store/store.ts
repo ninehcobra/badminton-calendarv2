@@ -1,15 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
-// Imports will be added here as we create slices
+import authReducer from './slices/authSlice'
+import { rtkQueryToastMiddleware } from './middleware/toastMiddleware'
 
 export const store = configureStore({
     reducer: {
-        // Add reducers here
+        auth: authReducer,
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(
-            // Add RTK Query middlewares here
-        ),
+        getDefaultMiddleware()
+            .concat(rtkQueryToastMiddleware),
+    // .concat(apiSlice.middleware), // Will add this when we have RTK Query API
 })
 
 setupListeners(store.dispatch)
