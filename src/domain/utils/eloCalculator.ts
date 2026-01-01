@@ -10,11 +10,11 @@ export const calculateEloChange = (
 };
 
 export const getRankTier = (score: number): string => {
-    if (score < 1200) return 'Iron IV'; // 1000 - 1200
-    if (score < 1400) return 'Bronze';
-    if (score < 1600) return 'Silver';
-    if (score < 1800) return 'Gold';
-    if (score < 2000) return 'Platinum';
-    if (score < 2200) return 'Diamond';
-    return 'Challenger';
+    if (score < 1200) return 'Sắt IV'; // 1000 - 1200
+    if (score < 1400) return 'Đồng';
+    if (score < 1600) return 'Bạc';
+    if (score < 1800) return 'Vàng';
+    if (score < 2000) return 'Bạch Kim';
+    if (score < 2200) return 'Kim Cương';
+    return 'Thách Đấu';
 };

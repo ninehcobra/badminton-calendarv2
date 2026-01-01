@@ -31,14 +31,14 @@ export const MatchHistoryView = ({ matches, participants }: MatchHistoryViewProp
                                 {/* Team A */}
                                 <div className="flex-1 flex flex-col gap-1 items-end">
                                     <div className="flex flex-wrap justify-end gap-1">
-                                        {m.team_a?.map((pid: string) => {
+                                        {m.team_a_ids?.map((pid: string) => {
                                             const p = getPlayer(pid);
                                             if (!p) return null;
                                             return (
                                                 <PlayerHoverCard key={pid} player={p}>
-                                                    <div className="flex items-center gap-1 bg-[#252525] px-1.5 py-0.5 rounded text-[10px] text-gray-300 border border-[#333] cursor-help transition-colors hover:bg-[#333]">
-                                                        <span className="truncate max-w-[80px]">{p.display_name}</span>
-                                                        <RankBadge tier={p.rank_tier || 'Unranked'} size="sm" className="w-3 h-3" />
+                                                    <div className="flex items-center gap-1 bg-[#252525] px-2 py-1 rounded text-[10px] text-gray-300 border border-[#333] cursor-help transition-colors hover:bg-[#333] w-[110px] justify-between">
+                                                        <span className="truncate flex-1 text-left">{p.display_name}</span>
+                                                        <RankBadge tier={p.rank_tier || 'Unranked'} size="sm" className="w-3 h-3 shrink-0" />
                                                     </div>
                                                 </PlayerHoverCard>
                                             );
@@ -59,14 +59,14 @@ export const MatchHistoryView = ({ matches, participants }: MatchHistoryViewProp
                                 {/* Team B */}
                                 <div className="flex-1 flex flex-col gap-1 items-start">
                                     <div className="flex flex-wrap justify-start gap-1">
-                                        {m.team_b?.map((pid: string) => {
+                                        {m.team_b_ids?.map((pid: string) => {
                                             const p = getPlayer(pid);
                                             if (!p) return null;
                                             return (
                                                 <PlayerHoverCard key={pid} player={p}>
-                                                    <div className="flex items-center gap-1 bg-[#252525] px-1.5 py-0.5 rounded text-[10px] text-gray-300 border border-[#333] cursor-help transition-colors hover:bg-[#333]">
-                                                        <RankBadge tier={p.rank_tier || 'Unranked'} size="sm" className="w-3 h-3" />
-                                                        <span className="truncate max-w-[80px]">{p.display_name}</span>
+                                                    <div className="flex items-center gap-1 bg-[#252525] px-2 py-1 rounded text-[10px] text-gray-300 border border-[#333] cursor-help transition-colors hover:bg-[#333] w-[110px] justify-between">
+                                                        <RankBadge tier={p.rank_tier || 'Unranked'} size="sm" className="w-3 h-3 shrink-0" />
+                                                        <span className="truncate flex-1 text-right">{p.display_name}</span>
                                                     </div>
                                                 </PlayerHoverCard>
                                             );

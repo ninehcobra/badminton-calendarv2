@@ -7,9 +7,12 @@ import { faTrophy, faMedal, faCrown } from '@fortawesome/free-solid-svg-icons';
 import { getRankTier } from '@/domain/utils/eloCalculator';
 import Link from 'next/link';
 import { RankBadge } from '@/presentation/components/ui/RankBadge';
+import { RankHelpModal } from '@/presentation/features/leaderboard/RankHelpModal';
+import { useState } from 'react';
 
 export default function LeaderboardPage() {
     const { data: profiles, isLoading } = useGetLeaderboardQuery();
+    const [showHelp, setShowHelp] = useState(false);
 
     if (isLoading) {
         return <div className="text-center text-gray-500 p-10">Đang tải bảng xếp hạng...</div>;
@@ -24,6 +27,15 @@ export default function LeaderboardPage() {
                 <div>
                     <h2 className="text-3xl font-bold text-white tracking-wide">Bảng Xếp Hạng</h2>
                     <p className="text-sm text-gray-400">Top 50 Vợt Thủ Xuất Sắc Nhất</p>
+                </div>
+                <div className="ml-auto">
+                    <button
+                        onClick={() => setShowHelp(true)}
+                        className="w-10 h-10 rounded-xl bg-[#202020] border border-[#333] text-gray-400 hover:text-white flex items-center justify-center transition-colors shadow-lg hover:shadow-cyan-500/20 hover:border-tik-cyan"
+                        title="Cách tính điểm"
+                    >
+                        <FontAwesomeIcon icon={faTrophy} className="text-xs" /> ?
+                    </button>
                 </div>
             </div>
 
@@ -89,6 +101,8 @@ export default function LeaderboardPage() {
                     </table>
                 </div>
             </div>
+
+            <RankHelpModal isOpen={showHelp} onClose={() => setShowHelp(false)} />
         </div>
     );
 }
