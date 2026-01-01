@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RankBadge } from '@/presentation/components/ui/RankBadge';
+import { RankBadge, getVietnameseTierName } from '@/presentation/components/ui/RankBadge';
 import { Modal } from '@/presentation/components/ui/Modal';
 import { ConfirmModal } from '@/presentation/components/ui/ConfirmModal';
 import { format } from 'date-fns';
@@ -23,7 +23,8 @@ import {
     useJoinEventMutation,
     useUpdateEventMutation,
     useGetEventMatchesQuery,
-    useDeleteEventMutation
+    useDeleteEventMutation,
+    useGetEventsQuery
 } from '@/presentation/store/api/eventsApi';
 import { toast } from 'react-hot-toast';
 import { calculateEloChange } from '@/domain/utils/eloCalculator';
@@ -32,23 +33,31 @@ import { useEffect } from 'react';
 interface EventDetailModalProps {
     isOpen: boolean;
     onClose: () => void;
-    event: Event | null;
+    eventId: string | null;
 }
 
-export const EventDetailModal = ({ isOpen, onClose, event }: EventDetailModalProps) => {
+export const EventDetailModal = ({ isOpen, onClose, eventId }: EventDetailModalProps) => {
     const { user } = useAppSelector((state) => state.auth);
 
+    // Fetch Event from Cache
+    const { event } = useGetEventsQuery(undefined, {
+        selectFromResult: ({ data }) => ({
+            event: data?.find(e => e.id === eventId) ?? null
+        }),
+        skip: !eventId
+    });
+
     // API Hooks
-    const { data: options, isLoading: isLoadingOptions } = useGetEventOptionsQuery(event?.id || '', {
-        skip: !event || event.event_type !== 'vote'
+    const { data: options, isLoading: isLoadingOptions } = useGetEventOptionsQuery(eventId || '', {
+        skip: !eventId || event?.event_type !== 'vote'
     });
     // Fetch all participants (invited & accepted) to check status? No, getEventParticipants now returns profiles.
     // We need to check if current user is in participants list.
-    const { data: participants, refetch: refetchParticipants } = useGetEventParticipantsQuery(event?.id || '', {
-        skip: !event
+    const { data: participants, refetch: refetchParticipants } = useGetEventParticipantsQuery(eventId || '', {
+        skip: !eventId
     });
-    const { data: eventMatches, refetch: refetchMatches } = useGetEventMatchesQuery(event?.id || '', {
-        skip: !event
+    const { data: eventMatches, refetch: refetchMatches } = useGetEventMatchesQuery(eventId || '', {
+        skip: !eventId
     });
 
     // Mutations
@@ -84,7 +93,12 @@ export const EventDetailModal = ({ isOpen, onClose, event }: EventDetailModalPro
         }
     }, [event]);
 
+    // Confirm Modal State
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
     const isCreator = user?.id === event?.created_by;
+
+    // Hooks must be called before any early return
     if (!event) return null;
 
     const isVotingEvent = event.event_type === 'vote' && event.status === 'planning';
@@ -123,11 +137,6 @@ export const EventDetailModal = ({ isOpen, onClose, event }: EventDetailModalPro
         } catch (err) { toast.error('Lỗi cập nhật'); }
     };
 
-    // Confirm Modal State
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-    // ... (existing code)
-
     const handleDeleteEvent = () => {
         setShowDeleteConfirm(true);
     };
@@ -135,7 +144,7 @@ export const EventDetailModal = ({ isOpen, onClose, event }: EventDetailModalPro
     const onConfirmDelete = async () => {
         try {
             await deleteEvent(event.id).unwrap();
-            toast.success('Đã xóa sự kiện thành công');
+            toast.success('Đã xóa sự kiện thành công!');
             setShowDeleteConfirm(false);
             onClose();
         } catch (err) {
@@ -206,6 +215,11 @@ export const EventDetailModal = ({ isOpen, onClose, event }: EventDetailModalPro
                             )}
                             {isCreator && (
                                 <>
+                                    {event.status === 'planning' && event.start_time && (
+                                        <button onClick={() => handleFinalize('default', event.start_time, event.end_time)} disabled={isFinalizing} className="bg-tik-red text-white px-3 py-1.5 rounded-lg font-bold text-sm hover:bg-red-600 border border-red-500 transition-all mr-2 animate-pulse">
+                                            {isFinalizing ? '...' : 'Chốt Ngay'}
+                                        </button>
+                                    )}
                                     <button onClick={() => setIsEditMode(true)} className="bg-[#333] text-white px-3 py-1.5 rounded-lg text-sm hover:bg-[#444] border border-gray-600 transition-all">
                                         <FontAwesomeIcon icon={faAlignLeft} className="mr-2" /> Sửa
                                     </button>
@@ -214,18 +228,19 @@ export const EventDetailModal = ({ isOpen, onClose, event }: EventDetailModalPro
                                     </button>
                                 </>
                             )}
-                            {canUpdateResult && (
-                                <button onClick={() => setIsResultMode(true)} className="ml-auto bg-gradient-to-r from-yellow-500 to-orange-500 text-black px-3 py-1.5 rounded-lg font-bold text-sm hover:brightness-110 transition-all">
-                                    <FontAwesomeIcon icon={faTrophy} className="mr-2" /> Quản lý Trận Đấu
+                            {event.status === 'confirmed' && (
+                                <button onClick={() => {
+                                    onClose();
+                                    // Use router.push equivalent or window for now as per previous pattern, but preferably simple nav
+                                    window.location.href = `/events/${event.id}/matches`;
+                                }} className={`ml-auto px-3 py-1.5 rounded-lg font-bold text-sm transition-all flex items-center gap-2 ${isCreator ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-black hover:brightness-110' : 'bg-[#333] text-white border border-gray-600 hover:bg-[#444]'}`}>
+                                    <FontAwesomeIcon icon={isCreator ? faTrophy : faExchangeAlt} />
+                                    {isCreator ? 'Quản lý Trận Đấu' : 'Xem Lịch Sử Đấu'}
                                 </button>
                             )}
                         </>
                     )}
-                    {isResultMode && (
-                        <button onClick={() => setIsResultMode(false)} className="text-gray-400 hover:text-white text-sm flex items-center gap-1">
-                            <FontAwesomeIcon icon={faArrowRight} className="rotate-180" /> Quay lại
-                        </button>
-                    )}
+                    {/* Inline Result Mode Removed/Hidden in favor of dedicated page */}
                     {isEditMode && (
                         <div className="flex gap-2 ml-auto">
                             <button onClick={() => setIsEditMode(false)} className="text-gray-400 text-sm hover:text-white">Hủy</button>

@@ -5,7 +5,7 @@ import { useAppSelector } from '@/presentation/hooks/redux';
 import { useGetProfileQuery, useGetMatchHistoryQuery, MatchResult } from '@/presentation/store/api/profilesApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMedal, faTrophy, faFeather, faEdit } from '@fortawesome/free-solid-svg-icons';
-import { RankBadge } from '@/presentation/components/ui/RankBadge';
+import { RankBadge, getVietnameseTierName } from '@/presentation/components/ui/RankBadge';
 
 export default function ProfilePage() {
     const { user } = useAppSelector((state) => state.auth);
@@ -70,7 +70,7 @@ export default function ProfilePage() {
                             <div className="flex items-center gap-2 bg-[#252525] px-3 py-1 rounded-full border border-[#333]">
                                 <span className="text-gray-400 text-sm">Rank:</span>
                                 <RankBadge tier={profile.rank_tier || 'Unranked'} size="sm" />
-                                <span className="font-bold text-tik-cyan">{profile.rank_tier || 'Unranked'}</span>
+                                <span className="font-bold text-tik-cyan">{getVietnameseTierName(profile.rank_tier || 'Unranked')}</span>
                             </div>
                         </div>
                     </div>

@@ -96,10 +96,10 @@ export const eventsApi = createApi({
             },
             invalidatesTags: ['Events'],
         }),
-        inviteParticipants: builder.mutation<void, { event_id: string; user_ids: string[] }>({
+        inviteParticipants: builder.mutation<null, { event_id: string; user_ids: string[] }>({
             queryFn: async ({ event_id, user_ids }) => {
                 if (!user_ids || user_ids.length === 0) {
-                    return { data: undefined };
+                    return { data: null };
                 }
 
                 const participants = user_ids.map(uid => ({
@@ -113,17 +113,17 @@ export const eventsApi = createApi({
                     .insert(participants);
 
                 if (error) return { error };
-                return { data: undefined };
+                return { data: null };
             },
         }),
-        createEventOptions: builder.mutation<void, CreateOptionRequest[]>({
+        createEventOptions: builder.mutation<null, CreateOptionRequest[]>({
             queryFn: async (options) => {
                 const { error } = await supabase
                     .from('event_options')
                     .insert(options);
 
                 if (error) return { error };
-                return { data: undefined };
+                return { data: null };
             },
             invalidatesTags: ['Options'],
         }),
@@ -140,18 +140,18 @@ export const eventsApi = createApi({
             },
             providesTags: ['Options'],
         }),
-        voteOption: builder.mutation<void, { option_id: string; user_id: string }>({
+        voteOption: builder.mutation<null, { option_id: string; user_id: string }>({
             queryFn: async ({ option_id, user_id }) => {
                 const { error } = await supabase
                     .from('votes')
                     .insert({ option_id, user_id });
 
                 if (error) return { error };
-                return { data: undefined };
+                return { data: null };
             },
             invalidatesTags: ['Options'],
         }),
-        unvoteOption: builder.mutation<void, { option_id: string; user_id: string }>({
+        unvoteOption: builder.mutation<null, { option_id: string; user_id: string }>({
             queryFn: async ({ option_id, user_id }) => {
                 const { error } = await supabase
                     .from('votes')
@@ -160,11 +160,11 @@ export const eventsApi = createApi({
                     .eq('user_id', user_id);
 
                 if (error) return { error };
-                return { data: undefined };
+                return { data: null };
             },
             invalidatesTags: ['Options'],
         }),
-        finalizeEvent: builder.mutation<void, { event_id: string; start_time: string; end_time: string }>({
+        finalizeEvent: builder.mutation<null, { event_id: string; start_time: string; end_time: string }>({
             queryFn: async ({ event_id, start_time, end_time }) => {
                 const { error } = await supabase
                     .from('events')
@@ -177,7 +177,7 @@ export const eventsApi = createApi({
                     .eq('id', event_id);
 
                 if (error) return { error };
-                return { data: undefined };
+                return { data: null };
             },
             invalidatesTags: ['Events', 'Options'],
         }),
@@ -194,7 +194,7 @@ export const eventsApi = createApi({
             },
             providesTags: ['Invites'],
         }),
-        respondToInvite: builder.mutation<void, { id: string; status: 'accepted' | 'declined' }>({
+        respondToInvite: builder.mutation<null, { id: string; status: 'accepted' | 'declined' }>({
             queryFn: async ({ id, status }) => {
                 const { error } = await supabase
                     .from('event_participants')
@@ -202,7 +202,7 @@ export const eventsApi = createApi({
                     .eq('id', id);
 
                 if (error) return { error };
-                return { data: undefined };
+                return { data: null };
             },
             invalidatesTags: ['Invites', 'Events'],
         }),
@@ -219,7 +219,7 @@ export const eventsApi = createApi({
             },
             providesTags: ['Events'],
         }),
-        joinEvent: builder.mutation<void, { event_id: string; user_id: string }>({
+        joinEvent: builder.mutation<null, { event_id: string; user_id: string }>({
             queryFn: async ({ event_id, user_id }) => {
                 const { error } = await supabase
                     .from('event_participants')
@@ -230,11 +230,11 @@ export const eventsApi = createApi({
                     });
 
                 if (error) return { error };
-                return { data: undefined };
+                return { data: null };
             },
             invalidatesTags: ['Events'], // Refresh participant list
         }),
-        updateEvent: builder.mutation<void, { event_id: string; title: string; location?: string; description?: string }>({
+        updateEvent: builder.mutation<null, { event_id: string; title: string; location?: string; description?: string }>({
             queryFn: async ({ event_id, title, location, description }) => {
                 const { error } = await supabase
                     .from('events')
@@ -246,11 +246,11 @@ export const eventsApi = createApi({
                 // Simulate Email Notification
                 console.log(`[EMAIL MOCK] Notification sent to participants of event ${event_id}: details updated.`);
 
-                return { data: undefined };
+                return { data: null };
             },
             invalidatesTags: ['Events'],
         }),
-        finishMatch: builder.mutation<void, {
+        finishMatch: builder.mutation<null, {
             event_id: string;
             team_a: string[];
             team_b: string[];
@@ -271,7 +271,7 @@ export const eventsApi = createApi({
                 });
 
                 if (error) return { error };
-                return { data: undefined };
+                return { data: null };
             },
             invalidatesTags: ['Events'],
         }),
@@ -290,7 +290,7 @@ export const eventsApi = createApi({
                 return { data: profiles };
             },
         }),
-        deleteEvent: builder.mutation<void, string>({
+        deleteEvent: builder.mutation<null, string>({
             queryFn: async (event_id) => {
                 // Delete event (participants and matches should cascade delete if FK configured, or we delete manually)
                 // Assuming FK with cascade for simplicity if schema supports, otherwise just delete event and let Supabase complain or handle it.
@@ -303,7 +303,7 @@ export const eventsApi = createApi({
                 if (error) return { error };
                 // Simulate Email Notification
                 console.log(`[EMAIL MOCK] Notification sent to participants of event ${event_id}: EVENT CANCELLED/DELETED.`);
-                return { data: undefined };
+                return { data: null };
             },
             invalidatesTags: ['Events'],
         }),

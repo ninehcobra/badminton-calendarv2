@@ -7,6 +7,8 @@ import { MonthView } from './MonthView';
 import { CreateEventModal } from '@/presentation/features/events/CreateEventModal';
 import { EventDetailModal } from '@/presentation/features/events/EventDetailModal';
 import { Event } from '@/presentation/store/api/eventsApi';
+import { WeekView } from './WeekView';
+import { DayView } from './DayView';
 
 export const CalendarWrapper = () => {
     const { viewMode } = useAppSelector((state) => state.calendar);
@@ -17,7 +19,7 @@ export const CalendarWrapper = () => {
 
     // View Event State
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-    const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+    const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
     const handleDateClick = (date: Date) => {
         setSelectedDate(date);
@@ -25,7 +27,7 @@ export const CalendarWrapper = () => {
     };
 
     const handleEventClick = (event: Event) => {
-        setSelectedEvent(event);
+        setSelectedEventId(event.id);
         setIsDetailModalOpen(true);
     };
 
@@ -48,15 +50,27 @@ export const CalendarWrapper = () => {
 
             <CalendarHeader />
 
-            <div className="flex-1">
+
+
+            <div className="flex-1 overflow-hidden">
                 {viewMode === 'month' && (
                     <MonthView
                         onDateClick={handleDateClick}
                         onEventClick={handleEventClick}
                     />
                 )}
-                {viewMode === 'week' && <div className="text-white text-center p-10">Week View Loading...</div>}
-                {viewMode === 'day' && <div className="text-white text-center p-10">Day View Loading...</div>}
+                {viewMode === 'week' && (
+                    <WeekView
+                        onDateClick={handleDateClick}
+                        onEventClick={handleEventClick}
+                    />
+                )}
+                {viewMode === 'day' && (
+                    <DayView
+                        onDateClick={handleDateClick}
+                        onEventClick={handleEventClick}
+                    />
+                )}
             </div>
 
             <CreateEventModal
@@ -68,7 +82,7 @@ export const CalendarWrapper = () => {
             <EventDetailModal
                 isOpen={isDetailModalOpen}
                 onClose={() => setIsDetailModalOpen(false)}
-                event={selectedEvent}
+                eventId={selectedEventId}
             />
         </div>
     );

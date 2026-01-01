@@ -4,6 +4,26 @@ import { faGem, faCrown, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 
 type Tier = 'Iron' | 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond' | 'Master' | 'Grandmaster' | 'Challenger' | 'Unranked';
 
+export const TIER_TRANSLATIONS: Record<string, string> = {
+    'Unranked': 'Chưa phân hạng',
+    'Iron': 'Sắt',
+    'Bronze': 'Đồng',
+    'Silver': 'Bạc',
+    'Gold': 'Vàng',
+    'Platinum': 'Bạch Kim',
+    'Diamond': 'Kim Cương',
+    'Master': 'Cao Thủ',
+    'Grandmaster': 'Đại Cao Thủ',
+    'Challenger': 'Thách Đấu'
+};
+
+export const getVietnameseTierName = (tier: string) => {
+    const base = tier?.split(' ')[0] || 'Unranked';
+    const division = tier?.split(' ')[1] || '';
+    const vnName = TIER_TRANSLATIONS[base] || base;
+    return division ? `${vnName} ${division}` : vnName;
+};
+
 interface RankBadgeProps {
     tier: string;
     size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -82,7 +102,7 @@ export const RankBadge: React.FC<RankBadgeProps> = ({ tier, size = 'md', classNa
 
     // Render SVG Badge
     return (
-        <div className={`relative flex items-center justify-center ${getSizeClasses()} ${className}`} title={tier}>
+        <div className={`relative flex items-center justify-center ${getSizeClasses()} ${className}`} title={getVietnameseTierName(tier)}>
             {/* Background Shield/Shape */}
             <svg viewBox="0 0 100 100" className={`w-full h-full ${style.shadow} transition-all duration-300 hover:scale-110`}>
                 <defs>

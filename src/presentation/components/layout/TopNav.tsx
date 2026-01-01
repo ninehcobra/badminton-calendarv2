@@ -5,12 +5,17 @@ import Link from 'next/link';
 import { useAppSelector } from '@/presentation/hooks/redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBell } from '@fortawesome/free-solid-svg-icons';
+import { getVietnameseTierName } from '@/presentation/components/ui/RankBadge';
+
+import { useGetProfileQuery } from '@/presentation/store/api/profilesApi';
 
 export const TopNav = () => {
     const { user } = useAppSelector((state) => state.auth);
+    const { data: profile } = useGetProfileQuery(user?.id || '', { skip: !user?.id });
+
     // Default to first letter of email if no metadata
-    const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
-    const avatarUrl = user?.user_metadata?.avatar_url;
+    const displayName = profile?.display_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+    const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
 
     return (
         <header className="h-16 bg-[#121212]/80 backdrop-blur-md border-b border-[#2f2f2f] flex items-center justify-between px-6 fixed top-0 right-0 left-64 z-40">
@@ -32,9 +37,13 @@ export const TopNav = () => {
                 </button>
 
                 <div className="flex items-center gap-3">
+
+
+
+
                     <div className="text-right hidden sm:block">
                         <p className="text-sm font-semibold text-white">{displayName}</p>
-                        <p className="text-xs text-tik-cyan">Rank: Unranked</p>
+                        <p className="text-xs text-tik-cyan">Rank: {getVietnameseTierName(profile?.rank_tier || 'Unranked')}</p>
                     </div>
                     <Link href="/profile" className="block w-10 h-10 rounded-full bg-gradient-to-tr from-tik-cyan to-tik-red p-[2px] hover:scale-105 transition-transform cursor-pointer">
                         <div className="w-full h-full rounded-full bg-[#121212] flex items-center justify-center overflow-hidden">

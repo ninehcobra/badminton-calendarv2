@@ -47,7 +47,8 @@ export const Sidebar = () => {
             <nav className="flex-1 overflow-y-auto py-4">
                 <ul className="space-y-2 px-3">
                     {navItems.map((item) => {
-                        const isActive = pathname === item.href;
+                        const isActive = pathname === item.href ||
+                            (item.href === '/dashboard' && pathname?.startsWith('/events')); // Highlight 'Lịch Thi Đấu' for event details/matches
                         return (
                             <li key={item.name}>
                                 <Link
