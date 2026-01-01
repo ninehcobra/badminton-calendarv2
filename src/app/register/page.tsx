@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/presentation/hooks/redux';
-import { registerUser } from '@/presentation/store/slices/authSlice';
+import { registerUser, checkSession } from '@/presentation/store/slices/authSlice';
 import { Input } from '@/presentation/components/ui/Input';
 import { Button } from '@/presentation/components/ui/Button';
 import Link from 'next/link';
+
+import { toast } from 'react-hot-toast';
 
 export default function RegisterPage() {
     const [email, setEmail] = useState('');
@@ -17,14 +19,36 @@ export default function RegisterPage() {
     const { user, loading, error } = useAppSelector((state) => state.auth);
 
     useEffect(() => {
+        dispatch(checkSession());
+    }, [dispatch]);
+
+    useEffect(() => {
         if (user) {
-            router.push('/');
+            router.push('/dashboard');
         }
     }, [user, router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await dispatch(registerUser({ email, password, fullName }));
+        const result = await dispatch(registerUser({ email, password, fullName }));
+        if (registerUser.fulfilled.match(result)) {
+            if (!result.payload.session) {
+                // Registration successful but no session -> Email confirmation needed
+                toast.success('Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.', {
+                    duration: 5000,
+                    style: {
+                        background: '#333',
+                        color: '#fff',
+                        border: '1px solid #00f2ea',
+                    }
+                });
+                router.push('/login');
+            } else {
+                toast.success('Đăng ký thành công!');
+            }
+        } else if (registerUser.rejected.match(result)) {
+            toast.error(result.payload as string || 'Đăng ký thất bại');
+        }
     };
 
     return (

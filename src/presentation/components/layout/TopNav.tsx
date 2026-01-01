@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react';
+import Link from 'next/link';
 import { useAppSelector } from '@/presentation/hooks/redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBell } from '@fortawesome/free-solid-svg-icons';
@@ -35,7 +36,7 @@ export const TopNav = () => {
                         <p className="text-sm font-semibold text-white">{displayName}</p>
                         <p className="text-xs text-tik-cyan">Rank: Unranked</p>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-tik-cyan to-tik-red p-[2px]">
+                    <Link href="/profile" className="block w-10 h-10 rounded-full bg-gradient-to-tr from-tik-cyan to-tik-red p-[2px] hover:scale-105 transition-transform cursor-pointer">
                         <div className="w-full h-full rounded-full bg-[#121212] flex items-center justify-center overflow-hidden">
                             {avatarUrl ? (
                                 // eslint-disable-next-line @next/next/no-img-element
@@ -44,7 +45,7 @@ export const TopNav = () => {
                                 <span className="font-bold text-white text-lg">{displayName[0].toUpperCase()}</span>
                             )}
                         </div>
-                    </div>
+                    </Link>
                 </div>
             </div>
         </header>

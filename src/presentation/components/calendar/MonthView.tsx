@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useAppSelector } from '@/presentation/hooks/redux';
+import { useGetEventsQuery } from '@/presentation/store/api/eventsApi';
 import {
     startOfMonth, endOfMonth, startOfWeek, endOfWeek,
     eachDayOfInterval, format, isSameMonth, isSameDay, isToday
@@ -9,8 +10,16 @@ import {
 import { vi } from 'date-fns/locale';
 import { clsx } from 'clsx';
 
-export const MonthView = () => {
+import { Event } from '@/presentation/store/api/eventsApi';
+
+interface MonthViewProps {
+    onDateClick?: (date: Date) => void;
+    onEventClick?: (event: Event) => void;
+}
+
+export const MonthView = ({ onDateClick, onEventClick }: MonthViewProps) => {
     const { viewDate } = useAppSelector((state) => state.calendar);
+    const { data: events } = useGetEventsQuery();
     const date = new Date(viewDate);
 
     const monthStart = startOfMonth(date);
@@ -56,9 +65,14 @@ export const MonthView = () => {
                         {row.map((day, dayIndex) => {
                             const isCurrentMonth = isSameMonth(day, monthStart);
                             const isDayToday = isToday(day);
+
+                            // Filter events for this day
+                            const dayEvents = events?.filter(e => isSameDay(new Date(e.start_time), day)) || [];
+
                             return (
                                 <div
                                     key={day.toISOString()}
+                                    onClick={() => onDateClick?.(day)}
                                     className={clsx(
                                         "relative p-2 border-r border-[#2f2f2f] last:border-r-0 transition-colors hover:bg-[#252525] group cursor-pointer",
                                         !isCurrentMonth && "bg-[#121212] text-gray-600"
@@ -76,14 +90,21 @@ export const MonthView = () => {
                                         </span>
                                     </div>
 
-                                    {/* Event Slot Placeholders */}
-                                    <div className="mt-2 space-y-1">
-                                        {/* Example Event */}
-                                        {isDayToday && (
-                                            <div className="px-2 py-1 text-xs rounded bg-tik-cyan/20 border border-tik-cyan/50 text-tik-cyan truncate font-medium">
-                                                Event placeholder
+                                    {/* Event Slots */}
+                                    <div className="mt-2 space-y-1 overflow-y-auto max-h-[80px] scrollbar-hide">
+                                        {dayEvents.map(event => (
+                                            <div
+                                                key={event.id}
+                                                className="px-2 py-1 text-xs rounded bg-tik-cyan/20 border border-tik-cyan/50 text-tik-cyan truncate font-medium hover:bg-tik-cyan/30 transition-colors"
+                                                title={event.title}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onEventClick?.(event);
+                                                }}
+                                            >
+                                                {format(new Date(event.start_time), 'HH:mm')} {event.title}
                                             </div>
-                                        )}
+                                        ))}
                                     </div>
 
                                     {/* Add Button on Hover */}

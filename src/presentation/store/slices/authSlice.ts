@@ -61,7 +61,8 @@ export const registerUser = createAsyncThunk(
                 },
             });
             if (error) throw error;
-            return data.session; // Note: Session might be null if email confirmation is required
+            // Return full data response (user + session)
+            return data;
         } catch (error: any) {
             return rejectWithValue(error.message);
         }
@@ -128,9 +129,9 @@ export const authSlice = createSlice({
             state.error = null;
         });
         builder.addCase(registerUser.fulfilled, (state, action) => {
-            // If session is null (email confirmation), user is created but not logged in.
-            state.session = action.payload;
-            state.user = action.payload?.user || null;
+            // Updated to handle { user, session } structure
+            state.session = action.payload.session;
+            state.user = action.payload.user;
             state.loading = false;
         });
         builder.addCase(registerUser.rejected, (state, action) => {

@@ -2,18 +2,25 @@ import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 import authReducer from './slices/authSlice'
 import calendarReducer from './slices/calendarSlice'
+import { eventsApi } from './api/eventsApi'
+import { profilesApi } from './api/profilesApi'
 import { rtkQueryToastMiddleware } from './middleware/toastMiddleware'
 
 export const store = configureStore({
     reducer: {
         auth: authReducer,
         calendar: calendarReducer,
+        [eventsApi.reducerPath]: eventsApi.reducer,
+        [profilesApi.reducerPath]: profilesApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
-            .concat(rtkQueryToastMiddleware),
-    // .concat(apiSlice.middleware), // Will add this when we have RTK Query API
+            .concat(rtkQueryToastMiddleware)
+            .concat(eventsApi.middleware)
+            .concat(profilesApi.middleware),
 })
+
+setupListeners(store.dispatch)
 
 setupListeners(store.dispatch)
 

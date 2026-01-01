@@ -27,15 +27,15 @@ export const Sidebar = () => {
     };
 
     const navItems = [
-        { name: 'Lịch Thi Đấu', href: '/', icon: faCalendarAlt },
-        { name: 'Tạo Lịch', href: '/events/new', icon: faPlusSquare },
+        { name: 'Lịch Thi Đấu', href: '/dashboard', icon: faCalendarAlt },
+        // { name: 'Tạo Lịch', href: '/events/new', icon: faPlusSquare }, // Hidden as we use Modal
         { name: 'Lời Mời', href: '/invites', icon: faEnvelopeOpenText },
         { name: 'Cài Đặt', href: '/settings', icon: faCog },
     ];
 
     return (
         <aside className="fixed left-0 top-0 h-full w-64 bg-[#121212] border-r border-[#2f2f2f] flex flex-col z-50">
-            <div className="p-6 flex items-center justify-center border-b border-[#2f2f2f]">
+            <div className="h-16 flex items-center justify-center border-b border-[#2f2f2f]">
                 <h1 className="text-2xl font-bold text-tik-cyan drop-shadow-[0_0_5px_rgba(0,242,234,0.5)]">
                     Badminton
                     <span className="text-tik-red inline-block ml-1">Cal</span>

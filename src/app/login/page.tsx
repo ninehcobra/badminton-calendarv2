@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/presentation/hooks/redux';
-import { loginUser } from '@/presentation/store/slices/authSlice';
+import { loginUser, checkSession } from '@/presentation/store/slices/authSlice';
 import { Input } from '@/presentation/components/ui/Input';
 import { Button } from '@/presentation/components/ui/Button';
 import Link from 'next/link';
+
+import { toast } from 'react-hot-toast';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -16,14 +18,29 @@ export default function LoginPage() {
     const { user, loading, error } = useAppSelector((state) => state.auth);
 
     useEffect(() => {
+        dispatch(checkSession());
+    }, [dispatch]);
+
+    useEffect(() => {
         if (user) {
-            router.push('/');
+            router.push('/dashboard');
         }
     }, [user, router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await dispatch(loginUser({ email, password }));
+        const result = await dispatch(loginUser({ email, password }));
+        if (loginUser.fulfilled.match(result)) {
+            toast.success('Đăng nhập thành công!', {
+                style: {
+                    background: '#333',
+                    color: '#fff',
+                    border: '1px solid #00f2ea',
+                }
+            });
+        } else if (loginUser.rejected.match(result)) {
+            toast.error(result.payload as string || 'Đăng nhập thất bại');
+        }
     };
 
     return (
