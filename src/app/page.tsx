@@ -15,6 +15,11 @@ export default function Home() {
           Register
         </a>
       </div>
+      <div className="mt-6">
+        <a href="/dashboard" className="text-gray-400 hover:text-white underline text-sm">
+          Go to Dashboard (Protected)
+        </a>
+      </div>
     </div>
   );
 }
