@@ -28,12 +28,15 @@ export const rtkQueryToastMiddleware: Middleware =
             // Check if it is a mutation by looking at the type or meta
             // Usually RTK Query actions have `meta.arg.type`
             if (action.meta?.arg?.type === 'mutation') {
+                // Disabled generic toast to allow custom handling in components
+                /*
                 toast.success('Thao tác thành công!', {
                     style: {
                         background: '#333',
                         color: '#00f2ea', // TikTok Cyan
                     }
                 });
+                */
             }
         }
 

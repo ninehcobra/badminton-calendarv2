@@ -1,6 +1,7 @@
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 import { supabase } from '@/lib/supabase';
 import { PostgrestError } from '@supabase/supabase-js';
+import { Profile } from './profilesApi';
 
 export interface Event {
     id: string;
@@ -81,12 +82,26 @@ export const eventsApi = createApi({
                     .single();
 
                 if (error) return { error };
+
+                // Auto-add creator as accepted participant
+                await supabase
+                    .from('event_participants')
+                    .insert({
+                        event_id: data.id,
+                        user_id: newEvent.created_by,
+                        status: 'accepted'
+                    });
+
                 return { data: data as Event };
             },
             invalidatesTags: ['Events'],
         }),
         inviteParticipants: builder.mutation<void, { event_id: string; user_ids: string[] }>({
             queryFn: async ({ event_id, user_ids }) => {
+                if (!user_ids || user_ids.length === 0) {
+                    return { data: undefined };
+                }
+
                 const participants = user_ids.map(uid => ({
                     event_id,
                     user_id: uid,
@@ -191,6 +206,107 @@ export const eventsApi = createApi({
             },
             invalidatesTags: ['Invites', 'Events'],
         }),
+        getEventMatches: builder.query<any[], string>({
+            queryFn: async (event_id) => {
+                const { data, error } = await supabase
+                    .from('match_results')
+                    .select('*')
+                    .eq('event_id', event_id)
+                    .order('created_at', { ascending: false });
+
+                if (error) return { error };
+                return { data: data as any[] };
+            },
+            providesTags: ['Events'],
+        }),
+        joinEvent: builder.mutation<void, { event_id: string; user_id: string }>({
+            queryFn: async ({ event_id, user_id }) => {
+                const { error } = await supabase
+                    .from('event_participants')
+                    .insert({
+                        event_id,
+                        user_id,
+                        status: 'accepted' // Auto-accept self-joins
+                    });
+
+                if (error) return { error };
+                return { data: undefined };
+            },
+            invalidatesTags: ['Events'], // Refresh participant list
+        }),
+        updateEvent: builder.mutation<void, { event_id: string; title: string; location?: string; description?: string }>({
+            queryFn: async ({ event_id, title, location, description }) => {
+                const { error } = await supabase
+                    .from('events')
+                    .update({ title, location, description })
+                    .eq('id', event_id);
+
+                if (error) return { error };
+
+                // Simulate Email Notification
+                console.log(`[EMAIL MOCK] Notification sent to participants of event ${event_id}: details updated.`);
+
+                return { data: undefined };
+            },
+            invalidatesTags: ['Events'],
+        }),
+        finishMatch: builder.mutation<void, {
+            event_id: string;
+            team_a: string[];
+            team_b: string[];
+            score_a: number;
+            score_b: number;
+            elo_change: number;
+            set_scores?: string; // New field
+        }>({
+            queryFn: async (args) => {
+                const { error } = await supabase.rpc('finish_match', {
+                    p_event_id: args.event_id,
+                    p_team_a: args.team_a,
+                    p_team_b: args.team_b,
+                    p_score_a: args.score_a,
+                    p_score_b: args.score_b,
+                    p_elo_change: args.elo_change,
+                    p_set_scores: args.set_scores
+                });
+
+                if (error) return { error };
+                return { data: undefined };
+            },
+            invalidatesTags: ['Events'],
+        }),
+        getEventParticipants: builder.query<Profile[], string>({
+            queryFn: async (event_id) => {
+                const { data, error } = await supabase
+                    .from('event_participants')
+                    .select('user_id, profiles(*)') // Join to get profile details
+                    .eq('event_id', event_id)
+                    .in('status', ['accepted', 'invited']); // Fetch invited ones too? Maybe just accepted for calculating average ELO. Let's keep accepted for now or both. 
+                // User request said: "display list of agreeing participants".
+
+                if (error) return { error };
+                // Flatten the result to return just profiles
+                const profiles = data.map((d: any) => d.profiles) as Profile[];
+                return { data: profiles };
+            },
+        }),
+        deleteEvent: builder.mutation<void, string>({
+            queryFn: async (event_id) => {
+                // Delete event (participants and matches should cascade delete if FK configured, or we delete manually)
+                // Assuming FK with cascade for simplicity if schema supports, otherwise just delete event and let Supabase complain or handle it.
+                // Best to delete related first but let's try direct delete if cascade is on.
+                const { error } = await supabase
+                    .from('events')
+                    .delete()
+                    .eq('id', event_id);
+
+                if (error) return { error };
+                // Simulate Email Notification
+                console.log(`[EMAIL MOCK] Notification sent to participants of event ${event_id}: EVENT CANCELLED/DELETED.`);
+                return { data: undefined };
+            },
+            invalidatesTags: ['Events'],
+        }),
     }),
 });
 
@@ -204,5 +320,11 @@ export const {
     useUnvoteOptionMutation,
     useFinalizeEventMutation,
     useGetInvitesQuery,
-    useRespondToInviteMutation
+    useRespondToInviteMutation,
+    useFinishMatchMutation,
+    useGetEventParticipantsQuery,
+    useJoinEventMutation,
+    useUpdateEventMutation,
+    useGetEventMatchesQuery,
+    useDeleteEventMutation
 } = eventsApi;

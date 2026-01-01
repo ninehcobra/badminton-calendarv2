@@ -9,7 +9,8 @@ import {
     faPlusSquare,
     faEnvelopeOpenText,
     faCog,
-    faSignOutAlt
+    faSignOutAlt,
+    faTrophy
 } from '@fortawesome/free-solid-svg-icons';
 import { clsx } from 'clsx';
 import { useAppDispatch } from '@/presentation/hooks/redux';
@@ -30,6 +31,7 @@ export const Sidebar = () => {
         { name: 'Lịch Thi Đấu', href: '/dashboard', icon: faCalendarAlt },
         // { name: 'Tạo Lịch', href: '/events/new', icon: faPlusSquare }, // Hidden as we use Modal
         { name: 'Lời Mời', href: '/invites', icon: faEnvelopeOpenText },
+        { name: 'Bảng Xếp Hạng', href: '/leaderboard', icon: faTrophy },
         { name: 'Cài Đặt', href: '/settings', icon: faCog },
     ];
 
