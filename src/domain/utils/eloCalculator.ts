@@ -46,5 +46,12 @@ export const getRankTier = (score: number): string => {
     if (score < 2150) return 'Kim Cương II';
     if (score < 2200) return 'Kim Cương I';
 
+    // Master (2200 - 2499)
+    if (score < 2500) return 'Cao Thủ';
+
+    // Grandmaster (2500 - 2799)
+    if (score < 2800) return 'Đại Cao Thủ';
+
+    // Challenger (2800+)
     return 'Thách Đấu';
 };

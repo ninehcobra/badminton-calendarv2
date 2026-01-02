@@ -189,11 +189,12 @@ export const RankBadge: React.FC<RankBadgeProps> = ({ tier, size = 'md', classNa
                     );
                 }
 
-                // Standard tiers with division (e.g., "Sắt IV")
-                if (tier.includes(' ')) {
+                // Standard tiers with division (e.g., "Sắt IV", "Kim Cương IV")
+                const divisionMatch = tier.match(/\b(I|II|III|IV)$/);
+                if (divisionMatch) {
                     return (
                         <div className="absolute -bottom-2 font-black text-[10px] md:text-xs text-white bg-black/50 px-1 rounded backdrop-blur-sm border border-white/10">
-                            {tier.split(' ')[1]}
+                            {divisionMatch[0]}
                         </div>
                     );
                 }

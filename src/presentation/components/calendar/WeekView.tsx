@@ -58,7 +58,7 @@ export const WeekView = ({ onEventClick, onDateClick }: WeekViewProps) => {
             <div className="flex-1 overflow-y-auto relative custom-scrollbar">
 
                 {/* Header: Days (Sticky) */}
-                <div className="grid grid-cols-8 border-b border-[#2f2f2f] bg-[#1f1f1f] sticky top-0 z-20 shadow-md">
+                <div className="grid grid-cols-8 border-b border-[#2f2f2f] bg-[#1f1f1f] sticky top-0 z-20 shadow-md min-w-[800px]">
                     <div className="p-3 text-center border-r border-[#2f2f2f] bg-[#1a1a1a]">
                         <span className="text-xs text-gray-500 font-bold">GMT+7</span>
                     </div>
@@ -79,7 +79,7 @@ export const WeekView = ({ onEventClick, onDateClick }: WeekViewProps) => {
                 </div>
 
                 {/* Time Grid Body */}
-                <div className="grid grid-cols-8 min-h-[1000px]">
+                <div className="grid grid-cols-8 min-h-[1000px] min-w-[800px]">
 
                     {/* Time Column */}
                     <div className="border-r border-[#2f2f2f] bg-[#1a1a1a]">

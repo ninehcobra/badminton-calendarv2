@@ -2,10 +2,11 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useAppSelector } from '@/presentation/hooks/redux';
+import { useAppSelector, useAppDispatch } from '@/presentation/hooks/redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faBell } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faBell, faBars } from '@fortawesome/free-solid-svg-icons';
 import { getVietnameseTierName } from '@/presentation/components/ui/RankBadge';
+import { openSidebar } from '@/presentation/store/slices/uiSlice';
 
 import { useGetProfileQuery } from '@/presentation/store/api/profilesApi';
 
@@ -13,20 +14,33 @@ export const TopNav = () => {
     const { user } = useAppSelector((state) => state.auth);
     const { data: profile } = useGetProfileQuery(user?.id || '', { skip: !user?.id });
 
+    const dispatch = useAppDispatch();
+
     // Default to first letter of email if no metadata
     const displayName = profile?.display_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
     const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
 
     return (
-        <header className="h-16 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 fixed top-0 right-0 left-64 z-40 transition-all duration-300">
-            {/* Search Bar */}
-            <div className="relative w-96 hidden md:block group">
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm lịch, bạn bè..."
-                    className="w-full bg-white/5 text-white rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:ring-1 focus:ring-tik-cyan/50 focus:bg-white/10 transition-all placeholder-gray-500 text-sm border border-transparent focus:border-tik-cyan/30"
-                />
-                <FontAwesomeIcon icon={faSearch} className="absolute left-3.5 top-3 text-gray-500 w-4 h-4 group-focus-within:text-tik-cyan transition-colors" />
+        <header className="h-16 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 fixed top-0 right-0 left-0 md:left-64 z-30 transition-all duration-300">
+            {/* Left: Mobile Menu + Search */}
+            <div className="flex items-center gap-4">
+                {/* Hamburger Menu (Mobile Only) */}
+                <button
+                    onClick={() => dispatch(openSidebar())}
+                    className="md:hidden text-gray-400 hover:text-white p-2 -ml-2"
+                >
+                    <FontAwesomeIcon icon={faBars} className="w-5 h-5" />
+                </button>
+
+                {/* Search Bar */}
+                <div className="relative w-96 hidden md:block group">
+                    <input
+                        type="text"
+                        placeholder="Tìm kiếm lịch, bạn bè..."
+                        className="w-full bg-white/5 text-white rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:ring-1 focus:ring-tik-cyan/50 focus:bg-white/10 transition-all placeholder-gray-500 text-sm border border-transparent focus:border-tik-cyan/30"
+                    />
+                    <FontAwesomeIcon icon={faSearch} className="absolute left-3.5 top-3 text-gray-500 w-4 h-4 group-focus-within:text-tik-cyan transition-colors" />
+                </div>
             </div>
 
             {/* Right Section */}

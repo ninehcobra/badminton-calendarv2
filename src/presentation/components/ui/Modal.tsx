@@ -36,7 +36,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
             <div
                 ref={modalRef}
                 className="w-full max-w-lg bg-[#1a1a1a] border border-[#333] rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.8)] overflow-hidden animate-in zoom-in-95 duration-200"
