@@ -1,8 +1,9 @@
 'use client'
 
-import React from 'react';
+import React, { use } from 'react';
 import { UserProfile } from '@/presentation/features/profile/UserProfile';
 
-export default function UserProfilePage({ params }: { params: { id: string } }) {
-    return <UserProfile userId={params.id} isOwnProfile={false} />;
+export default function UserProfilePage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
+    return <UserProfile userId={id} isOwnProfile={false} />;
 }

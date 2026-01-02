@@ -14,14 +14,14 @@
   --color-tik-cyan: var(--tik-cyan);
   --color-tik-red: var(--tik-red);
   --color-tik-dark: var(--tik-dark);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-be-vietnam-pro);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-be-vietnam-pro), sans-serif;
 }
 
 

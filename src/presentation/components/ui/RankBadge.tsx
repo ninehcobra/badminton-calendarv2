@@ -176,12 +176,30 @@ export const RankBadge: React.FC<RankBadgeProps> = ({ tier, size = 'md', classNa
                 )}
             </div>
 
-            {/* Division Number (IV, III, II, I) */}
-            {tier.includes(' ') && (
-                <div className="absolute -bottom-2 font-black text-[10px] md:text-xs text-white bg-black/50 px-1 rounded backdrop-blur-sm border border-white/10">
-                    {tier.split(' ')[1]}
-                </div>
-            )}
+            {/* Division Number or Full Rank Name */}
+            {(() => {
+                // Check if it's a high tier (no division)
+                const isHighTier = ['Master', 'Grandmaster', 'Challenger', 'Cao Thủ', 'Đại Cao Thủ', 'Thách Đấu'].includes(tier);
+
+                if (isHighTier) {
+                    return (
+                        <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap font-black text-[8px] md:text-[10px] text-white bg-black/70 px-1.5 py-0.5 rounded-full backdrop-blur-md border border-white/10 tracking-tighter z-10 shadow-lg">
+                            {tier}
+                        </div>
+                    );
+                }
+
+                // Standard tiers with division (e.g., "Sắt IV")
+                if (tier.includes(' ')) {
+                    return (
+                        <div className="absolute -bottom-2 font-black text-[10px] md:text-xs text-white bg-black/50 px-1 rounded backdrop-blur-sm border border-white/10">
+                            {tier.split(' ')[1]}
+                        </div>
+                    );
+                }
+
+                return null;
+            })()}
         </div>
     );
 };

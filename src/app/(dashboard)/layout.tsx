@@ -38,10 +38,13 @@ export default function DashboardLayout({
     if (!user) return null; // Logic handled in useEffect, just return null to avoid flash
 
     return (
-        <div className="min-h-screen bg-[#121212] text-foreground font-sans selection:bg-tik-cyan selection:text-black">
+        <div className="min-h-screen bg-[#050505] text-foreground font-sans selection:bg-tik-cyan selection:text-black">
+            <div className="fixed inset-0 z-0 pointer-events-none opacity-20" style={{ backgroundImage: "url('/hero-bg.png')", backgroundSize: 'cover', backgroundPosition: 'center' }} />
+            <div className="fixed inset-0 z-0 pointer-events-none bg-gradient-to-br from-black via-[#050505] to-[#0a0a0a] opacity-90" />
+
             <Sidebar />
             <TopNav />
-            <main className="pl-64 pt-16 min-h-screen">
+            <main className="pl-64 pt-16 min-h-screen relative z-10">
                 <div className="p-8 max-w-7xl mx-auto">
                     {children}
                 </div>

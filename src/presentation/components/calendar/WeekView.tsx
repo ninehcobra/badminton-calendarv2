@@ -54,30 +54,32 @@ export const WeekView = ({ onEventClick, onDateClick }: WeekViewProps) => {
 
     return (
         <div className="flex flex-col h-full border border-[#2f2f2f] rounded-xl overflow-hidden bg-[#1a1a1a] shadow-lg">
-            {/* Header: Days */}
-            <div className="grid grid-cols-8 border-b border-[#2f2f2f] bg-[#1f1f1f] sticky top-0 z-10">
-                <div className="p-3 text-center border-r border-[#2f2f2f] bg-[#1aa1a]">
-                    <span className="text-xs text-gray-500 font-bold">GMT+7</span>
-                </div>
-                {weekDays.map((day) => {
-                    const isTodayDay = isToday(day);
-                    return (
-                        <div key={day.toISOString()} className="py-3 text-center border-r border-[#2f2f2f] last:border-r-0">
-                            <div className="text-xs font-semibold text-gray-400 uppercase">{format(day, 'EEE', { locale: vi })}</div>
-                            <div className={clsx(
-                                "text-lg font-bold w-8 h-8 rounded-full flex items-center justify-center mx-auto mt-1",
-                                isTodayDay ? "bg-tik-red text-white shadow-lg shadow-tik-red/50" : "text-white"
-                            )}>
-                                {format(day, 'dd')}
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
+            {/* Single Scrollable Container for both Header and Body to ensure Grid Alignment */}
+            <div className="flex-1 overflow-y-auto relative custom-scrollbar">
 
-            {/* Scrollable Time Grid */}
-            <div className="flex-1 overflow-y-auto relative no-scrollbar">
-                <div className="grid grid-cols-8 min-h-[1000px]"> {/* Min-height ensures spacing */}
+                {/* Header: Days (Sticky) */}
+                <div className="grid grid-cols-8 border-b border-[#2f2f2f] bg-[#1f1f1f] sticky top-0 z-20 shadow-md">
+                    <div className="p-3 text-center border-r border-[#2f2f2f] bg-[#1a1a1a]">
+                        <span className="text-xs text-gray-500 font-bold">GMT+7</span>
+                    </div>
+                    {weekDays.map((day) => {
+                        const isTodayDay = isToday(day);
+                        return (
+                            <div key={day.toISOString()} className="py-3 text-center border-r border-[#2f2f2f] last:border-r-0 bg-[#1f1f1f]">
+                                <div className="text-xs font-semibold text-gray-400 uppercase">{format(day, 'EEE', { locale: vi })}</div>
+                                <div className={clsx(
+                                    "text-lg font-bold w-8 h-8 rounded-full flex items-center justify-center mx-auto mt-1",
+                                    isTodayDay ? "bg-tik-red text-white shadow-lg shadow-tik-red/50" : "text-white"
+                                )}>
+                                    {format(day, 'dd')}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* Time Grid Body */}
+                <div className="grid grid-cols-8 min-h-[1000px]">
 
                     {/* Time Column */}
                     <div className="border-r border-[#2f2f2f] bg-[#1a1a1a]">
