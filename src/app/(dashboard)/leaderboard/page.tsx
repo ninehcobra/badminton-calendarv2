@@ -70,7 +70,7 @@ export default function LeaderboardPage() {
                                             )}
                                         </td>
                                         <td className="p-4">
-                                            <Link href={/* `/profile/${profile.id}` */ '/profile'} className="flex items-center gap-3 hover:opacity-80 transition-opacity w-fit">
+                                            <Link href={`/profile/${profile.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity w-fit">
                                                 <div className={`w-10 h-10 rounded-full p-[2px] ${isTop1 ? 'bg-gradient-to-tr from-yellow-400 to-orange-500' : 'bg-gray-700'}`}>
                                                     <div className="w-full h-full rounded-full bg-[#1a1a1a] overflow-hidden flex items-center justify-center">
                                                         {profile.avatar_url ? (

@@ -17,12 +17,12 @@ export const RankHelpModal = ({ isOpen, onClose }: RankHelpModalProps) => {
 
     // Rank Data
     const ranks = [
-        { name: 'Sắt IV', range: '0 - 1199', color: 'text-gray-400', tier: 'Iron IV' },
-        { name: 'Đồng', range: '1200 - 1399', color: 'text-orange-400', tier: 'Bronze' },
-        { name: 'Bạc', range: '1400 - 1599', color: 'text-gray-300', tier: 'Silver' },
-        { name: 'Vàng', range: '1600 - 1799', color: 'text-yellow-400', tier: 'Gold' },
-        { name: 'Bạch Kim', range: '1800 - 1999', color: 'text-cyan-400', tier: 'Platinum' },
-        { name: 'Kim Cương', range: '2000 - 2199', color: 'text-blue-400', tier: 'Diamond' },
+        { name: 'Sắt (IV - I)', range: '0 - 1199', color: 'text-gray-400', tier: 'Iron IV' },
+        { name: 'Đồng (IV - I)', range: '1200 - 1399', color: 'text-orange-400', tier: 'Bronze' },
+        { name: 'Bạc (IV - I)', range: '1400 - 1599', color: 'text-gray-300', tier: 'Silver' },
+        { name: 'Vàng (IV - I)', range: '1600 - 1799', color: 'text-yellow-400', tier: 'Gold' },
+        { name: 'Bạch Kim (IV - I)', range: '1800 - 1999', color: 'text-cyan-400', tier: 'Platinum' },
+        { name: 'Kim Cương (IV - I)', range: '2000 - 2199', color: 'text-blue-400', tier: 'Diamond' },
         { name: 'Thách Đấu', range: '2200+', color: 'text-red-500', tier: 'Challenger' },
     ];
 
@@ -55,6 +55,8 @@ export const RankHelpModal = ({ isOpen, onClose }: RankHelpModalProps) => {
                     <p className="text-gray-400 text-sm mb-4 bg-[#252525] p-3 rounded border border-[#333] italic">
                         <FontAwesomeIcon icon={faInfoCircle} className="mr-1 text-tik-cyan" />
                         Điểm Elo được tính dựa trên kết quả thi đấu. Thắng đội mạnh hơn sẽ được cộng nhiều điểm hơn.
+                        <br /><br />
+                        <span className="text-tik-cyan">*</span> Các bậc từ Sắt đến Kim Cương được chia thành 4 đoàn (IV, III, II, I), mỗi đoàn khoảng 50 điểm.
                     </p>
 
                     <div className="space-y-2">

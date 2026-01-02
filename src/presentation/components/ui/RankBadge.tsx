@@ -31,8 +31,26 @@ interface RankBadgeProps {
 }
 
 export const RankBadge: React.FC<RankBadgeProps> = ({ tier, size = 'md', className = '' }) => {
-    // Normalize tier string (e.g., "Iron IV" -> "Iron")
-    const baseTier = (tier.split(' ')[0] || 'Unranked') as Tier;
+    // Normalize tier string (e.g., "Iron IV" -> "Iron" or "Sắt IV" -> "Iron")
+    const getBaseTier = (t: string): Tier => {
+        if (!t || t === 'Unranked') return 'Unranked';
+
+        // Handle Vietnamese base names
+        if (t.startsWith('Sắt')) return 'Iron';
+        if (t.startsWith('Đồng')) return 'Bronze';
+        if (t.startsWith('Bạc')) return 'Silver';
+        if (t.startsWith('Vàng')) return 'Gold';
+        if (t.startsWith('Bạch Kim')) return 'Platinum';
+        if (t.startsWith('Kim Cương')) return 'Diamond';
+        if (t.startsWith('Cao Thủ')) return 'Master';
+        if (t.startsWith('Đại Cao Thủ')) return 'Grandmaster';
+        if (t.startsWith('Thách Đấu')) return 'Challenger';
+
+        // Fallback to English splitting
+        return (t.split(' ')[0] || 'Unranked') as Tier;
+    };
+
+    const baseTier = getBaseTier(tier);
 
     const getSizeClasses = () => {
         switch (size) {
@@ -89,6 +107,18 @@ export const RankBadge: React.FC<RankBadgeProps> = ({ tier, size = 'md', classNa
                     shadow: 'drop-shadow-[0_0_15px_rgba(235,76,76,0.8)]',
                     gradient: 'from-purple-500 to-pink-600'
                 };
+            case 'Grandmaster':
+                return {
+                    color: '#FF4500',
+                    shadow: 'drop-shadow-[0_0_15px_rgba(255,69,0,0.8)]',
+                    gradient: 'from-red-500 to-orange-600'
+                };
+            case 'Challenger':
+                return {
+                    color: '#00FFFF',
+                    shadow: 'drop-shadow-[0_0_15px_rgba(0,255,255,0.8)]',
+                    gradient: 'from-cyan-400 to-blue-600'
+                };
             default:
                 return {
                     color: '#333333',
@@ -102,7 +132,7 @@ export const RankBadge: React.FC<RankBadgeProps> = ({ tier, size = 'md', classNa
 
     // Render SVG Badge
     return (
-        <div className={`relative flex items-center justify-center ${getSizeClasses()} ${className}`} title={getVietnameseTierName(tier)}>
+        <div className={`relative flex items-center justify-center ${getSizeClasses()} ${className}`} title={tier}>
             {/* Background Shield/Shape */}
             <svg viewBox="0 0 100 100" className={`w-full h-full ${style.shadow} transition-all duration-300 hover:scale-110`}>
                 <defs>
